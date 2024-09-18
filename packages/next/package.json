@@ -1,0 +1,47 @@
+{
+  "name": "@my-project/next",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Next.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "download-api-client": "curl --fail --silent --show-error -o ./src/api/openapi.json http://localhost:3000/api/doc && prettier --write ./src/api/openapi.json",
+    "generate-api-client": "openapi-qraft --plugin tanstack-query-react --plugin openapi-typescript ./src/api/openapi.json --service-name-base endpoint[1] --operation-name-modifier 'get /**:get$ ==> findAll' 'get /**:getId ==> findOne' 'post /**:post$ ==> create' 'put /**:put$ ==> update' --explicit-component-exports --output-dir src/api/client"
+  },
+  "type": "module",
+  "dependencies": {
+    "@openapi-qraft/react": "^2.0.0-next.12",
+    "@tanstack/react-query": "^5.56.2",
+    "next": "14.2.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "server-only": "^0.0.1",
+    "hono": "^4.6.2",
+    "@my-project/api": "1.0.0",
+    "set-cookie-parser": "^2.7.0",
+    "wildcard-match": "^5.1.3"
+  },
+  "devDependencies": {
+    "@openapi-qraft/cli": "^2.0.0-next.12",
+    "@types/node": "20.16.5",
+    "@types/react": "18.3.7",
+    "@types/react-dom": "18.3.0",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.2",
+    "@hono/zod-openapi": "^0.16.0",
+    "@types/set-cookie-parser": "^2.4.10"
+  },
+  "browser": {
+    "knex": false,
+    "crypto": false,
+    "stream": false,
+    "fs": false,
+    "timers": false,
+    "tty": false,
+    "better-sqlite3": false
+  }
+}

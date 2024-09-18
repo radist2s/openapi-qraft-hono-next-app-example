@@ -1,0 +1,896 @@
+{
+  "openapi": "3.1.0",
+  "info": { "version": "1.0.0", "title": "My API" },
+  "components": {
+    "securitySchemes": {
+      "cookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "my-jwt-token"
+      },
+      "bearerAuth": {
+        "type": "http",
+        "in": "cookie",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "ValidationIssueSchema": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "array",
+                "items": {
+                  "anyOf": [{ "type": "string" }, { "type": "number" }]
+                }
+              },
+              "message": { "type": "string" },
+              "fatal": { "type": "boolean" },
+              "code": { "type": "string", "enum": ["invalid_type"] },
+              "expected": {
+                "type": "string",
+                "enum": [
+                  "string",
+                  "nan",
+                  "number",
+                  "integer",
+                  "float",
+                  "boolean",
+                  "date",
+                  "bigint",
+                  "symbol",
+                  "undefined",
+                  "null",
+                  "array",
+                  "object",
+                  "function",
+                  "unknown",
+                  "promise",
+                  "void",
+                  "never",
+                  "map",
+                  "set"
+                ]
+              },
+              "received": {
+                "type": "string",
+                "enum": [
+                  "string",
+                  "nan",
+                  "number",
+                  "integer",
+                  "float",
+                  "boolean",
+                  "date",
+                  "bigint",
+                  "symbol",
+                  "undefined",
+                  "null",
+                  "array",
+                  "object",
+                  "function",
+                  "unknown",
+                  "promise",
+                  "void",
+                  "never",
+                  "map",
+                  "set"
+                ]
+              }
+            },
+            "required": ["path", "message", "code", "expected", "received"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "array",
+                "items": {
+                  "anyOf": [{ "type": "string" }, { "type": "number" }]
+                }
+              },
+              "message": { "type": "string" },
+              "fatal": { "type": "boolean" },
+              "code": { "type": "string", "enum": ["invalid_literal"] },
+              "expected": {},
+              "received": {}
+            },
+            "required": ["path", "message", "code"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "array",
+                "items": {
+                  "anyOf": [{ "type": "string" }, { "type": "number" }]
+                }
+              },
+              "message": { "type": "string" },
+              "fatal": { "type": "boolean" },
+              "code": { "type": "string", "enum": ["unrecognized_keys"] },
+              "keys": { "type": "array", "items": { "type": "string" } }
+            },
+            "required": ["path", "message", "code", "keys"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "array",
+                "items": {
+                  "anyOf": [{ "type": "string" }, { "type": "number" }]
+                }
+              },
+              "message": { "type": "string" },
+              "fatal": { "type": "boolean" },
+              "code": { "type": "string", "enum": ["invalid_union"] },
+              "unionErrors": { "type": "array", "items": {} }
+            },
+            "required": ["path", "message", "code", "unionErrors"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "array",
+                "items": {
+                  "anyOf": [{ "type": "string" }, { "type": "number" }]
+                }
+              },
+              "message": { "type": "string" },
+              "fatal": { "type": "boolean" },
+              "code": {
+                "type": "string",
+                "enum": ["invalid_union_discriminator"]
+              },
+              "options": {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    { "type": "string" },
+                    { "type": "number" },
+                    { "type": "boolean" },
+                    { "type": "null" },
+                    { "type": "null" }
+                  ]
+                }
+              }
+            },
+            "required": ["path", "message", "code", "options"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "array",
+                "items": {
+                  "anyOf": [{ "type": "string" }, { "type": "number" }]
+                }
+              },
+              "message": { "type": "string" },
+              "fatal": { "type": "boolean" },
+              "code": { "type": "string", "enum": ["invalid_enum_value"] },
+              "received": {
+                "anyOf": [{ "type": "string" }, { "type": "number" }]
+              },
+              "options": {
+                "type": "array",
+                "items": {
+                  "anyOf": [{ "type": "string" }, { "type": "number" }]
+                }
+              }
+            },
+            "required": ["path", "message", "code", "received", "options"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "array",
+                "items": {
+                  "anyOf": [{ "type": "string" }, { "type": "number" }]
+                }
+              },
+              "message": { "type": "string" },
+              "fatal": { "type": "boolean" },
+              "code": { "type": "string", "enum": ["invalid_arguments"] },
+              "argumentsError": {}
+            },
+            "required": ["path", "message", "code"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "array",
+                "items": {
+                  "anyOf": [{ "type": "string" }, { "type": "number" }]
+                }
+              },
+              "message": { "type": "string" },
+              "fatal": { "type": "boolean" },
+              "code": { "type": "string", "enum": ["invalid_return_type"] },
+              "returnTypeError": {}
+            },
+            "required": ["path", "message", "code"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "array",
+                "items": {
+                  "anyOf": [{ "type": "string" }, { "type": "number" }]
+                }
+              },
+              "message": { "type": "string" },
+              "fatal": { "type": "boolean" },
+              "code": { "type": "string", "enum": ["invalid_date"] }
+            },
+            "required": ["path", "message", "code"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "array",
+                "items": {
+                  "anyOf": [{ "type": "string" }, { "type": "number" }]
+                }
+              },
+              "message": { "type": "string" },
+              "fatal": { "type": "boolean" },
+              "code": { "type": "string", "enum": ["invalid_string"] },
+              "validation": {
+                "anyOf": [
+                  { "type": "string", "enum": ["email"] },
+                  { "type": "string", "enum": ["url"] },
+                  { "type": "string", "enum": ["emoji"] },
+                  { "type": "string", "enum": ["uuid"] },
+                  { "type": "string", "enum": ["nanoid"] },
+                  { "type": "string", "enum": ["regex"] },
+                  { "type": "string", "enum": ["cuid"] },
+                  { "type": "string", "enum": ["cuid2"] },
+                  { "type": "string", "enum": ["ulid"] },
+                  { "type": "string", "enum": ["datetime"] },
+                  { "type": "string", "enum": ["date"] },
+                  { "type": "string", "enum": ["time"] },
+                  { "type": "string", "enum": ["duration"] },
+                  { "type": "string", "enum": ["ip"] },
+                  { "type": "string", "enum": ["base64"] },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "includes": { "type": "string" },
+                      "position": { "type": "number" }
+                    },
+                    "required": ["includes"]
+                  },
+                  {
+                    "type": "object",
+                    "properties": { "startsWith": { "type": "string" } },
+                    "required": ["startsWith"]
+                  },
+                  {
+                    "type": "object",
+                    "properties": { "endsWith": { "type": "string" } },
+                    "required": ["endsWith"]
+                  }
+                ]
+              }
+            },
+            "required": ["path", "message", "code", "validation"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "array",
+                "items": {
+                  "anyOf": [{ "type": "string" }, { "type": "number" }]
+                }
+              },
+              "message": { "type": "string" },
+              "fatal": { "type": "boolean" },
+              "code": { "type": "string", "enum": ["too_small"] },
+              "minimum": {
+                "anyOf": [
+                  { "type": "number" },
+                  { "type": "string", "pattern": "^d+$" }
+                ]
+              },
+              "inclusive": { "type": "boolean" },
+              "exact": { "type": "boolean" },
+              "type": {
+                "type": "string",
+                "enum": ["array", "string", "number", "set", "date", "bigint"]
+              }
+            },
+            "required": [
+              "path",
+              "message",
+              "code",
+              "minimum",
+              "inclusive",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "array",
+                "items": {
+                  "anyOf": [{ "type": "string" }, { "type": "number" }]
+                }
+              },
+              "message": { "type": "string" },
+              "fatal": { "type": "boolean" },
+              "code": { "type": "string", "enum": ["too_big"] },
+              "maximum": {
+                "anyOf": [
+                  { "type": "number" },
+                  { "type": "string", "pattern": "^d+$" }
+                ]
+              },
+              "inclusive": { "type": "boolean" },
+              "exact": { "type": "boolean" },
+              "type": {
+                "type": "string",
+                "enum": ["array", "string", "number", "set", "date", "bigint"]
+              }
+            },
+            "required": [
+              "path",
+              "message",
+              "code",
+              "maximum",
+              "inclusive",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "array",
+                "items": {
+                  "anyOf": [{ "type": "string" }, { "type": "number" }]
+                }
+              },
+              "message": { "type": "string" },
+              "fatal": { "type": "boolean" },
+              "code": {
+                "type": "string",
+                "enum": ["invalid_intersection_types"]
+              }
+            },
+            "required": ["path", "message", "code"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "array",
+                "items": {
+                  "anyOf": [{ "type": "string" }, { "type": "number" }]
+                }
+              },
+              "message": { "type": "string" },
+              "fatal": { "type": "boolean" },
+              "code": { "type": "string", "enum": ["not_multiple_of"] },
+              "multipleOf": {
+                "anyOf": [
+                  { "type": "number" },
+                  { "type": "string", "pattern": "^d+$" }
+                ]
+              }
+            },
+            "required": ["path", "message", "code", "multipleOf"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "array",
+                "items": {
+                  "anyOf": [{ "type": "string" }, { "type": "number" }]
+                }
+              },
+              "message": { "type": "string" },
+              "fatal": { "type": "boolean" },
+              "code": { "type": "string", "enum": ["not_finite"] }
+            },
+            "required": ["path", "message", "code"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "array",
+                "items": {
+                  "anyOf": [{ "type": "string" }, { "type": "number" }]
+                }
+              },
+              "message": { "type": "string" },
+              "fatal": { "type": "boolean" },
+              "code": { "type": "string", "enum": ["custom"] },
+              "params": { "type": "object", "additionalProperties": {} }
+            },
+            "required": ["path", "message", "code"]
+          }
+        ]
+      },
+      "ValidationErrorResponse": {
+        "type": "object",
+        "properties": {
+          "issues": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ValidationIssueSchema" }
+          }
+        },
+        "required": ["issues"]
+      },
+      "UnauthorizedErrorResponse": {
+        "type": "object",
+        "properties": {
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "path": { "type": "array", "items": { "type": "string" } },
+                "message": { "type": "string" },
+                "fatal": { "type": "boolean" },
+                "code": { "type": "string", "enum": ["unauthorized"] }
+              },
+              "required": ["path", "message", "fatal", "code"]
+            }
+          }
+        },
+        "required": ["issues"]
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "The user's ID" },
+          "name": {
+            "type": "string",
+            "description": "The user's name",
+            "example": "John Doe"
+          },
+          "age": {
+            "type": "number",
+            "description": "The user's age",
+            "example": 30
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The user's created date"
+          }
+        },
+        "required": ["id", "name", "age", "created"]
+      },
+      "UserCreatePayloadFormData": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "User name",
+            "example": "John Doe"
+          },
+          "age": {
+            "type": "string",
+            "description": "User age",
+            "example": "30"
+          }
+        },
+        "required": ["name", "age"]
+      },
+      "UserCreatePayloadJson": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "User name",
+            "example": "John Doe"
+          },
+          "age": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 150,
+            "description": "User age",
+            "example": 30
+          }
+        },
+        "required": ["name", "age"]
+      },
+      "UserUpdatePayloadFormData": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "User name",
+            "example": "John Doe"
+          },
+          "age": {
+            "type": "string",
+            "description": "User age",
+            "example": "30"
+          },
+          "id": { "type": "string", "minLength": 1, "example": "1234" }
+        },
+        "required": ["name", "age", "id"]
+      },
+      "UserUpdatePayloadJson": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "User name",
+            "example": "John Doe"
+          },
+          "age": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 150,
+            "description": "User age",
+            "example": 30
+          },
+          "id": { "type": "string", "minLength": 1, "example": "1234" }
+        },
+        "required": ["name", "age", "id"]
+      }
+    },
+    "parameters": {}
+  },
+  "paths": {
+    "/api/auth/login": {
+      "post": {
+        "operationId": "login",
+        "description": "Sign in",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": ["cookie", "json"],
+              "default": "json",
+              "description": "The mode to return the token",
+              "example": "json"
+            },
+            "required": false,
+            "name": "mode",
+            "in": "query"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "john.doe@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 1,
+                    "example": "123456"
+                  }
+                },
+                "required": ["email", "password"]
+              }
+            },
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "john.doe@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 1,
+                    "example": "123456"
+                  }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success response with JWT token in JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": { "type": "string", "example": "eyJhbG..." }
+                  },
+                  "required": ["token"]
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "Success response with JWT token in the cookie",
+            "headers": {
+              "Cookie": {
+                "schema": { "type": "string", "example": "my-jwt-token=1234" },
+                "required": true
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "operationId": "logout",
+        "description": "Sign out",
+        "security": [{ "cookieAuth": [] }, { "bearerAuth": [] }],
+        "responses": {
+          "204": {
+            "description": "Success response with removed JWT token in the cookie",
+            "headers": {
+              "Cookie": {
+                "schema": { "type": "string", "example": "my-jwt-token=''" },
+                "required": true
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/profile": {
+      "get": {
+        "operationId": "getProfile",
+        "description": "Get user profile",
+        "security": [{ "cookieAuth": [] }, { "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Success response with JWT token in JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string",
+                      "example": "john.doe@example.com"
+                    }
+                  },
+                  "required": ["email"]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{id}": {
+      "get": {
+        "description": "Get user",
+        "parameters": [
+          {
+            "schema": { "type": "string", "example": "1234" },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieve the user",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/User" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "description": "Get users",
+        "parameters": [
+          {
+            "schema": {
+              "type": ["number", "null"],
+              "minimum": 1,
+              "default": 1,
+              "example": 2
+            },
+            "required": false,
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": ["number", "null"],
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10,
+              "example": 10
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieve users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/User" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Create user",
+        "security": [{ "cookieAuth": [] }, { "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCreatePayloadFormData"
+              }
+            },
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UserCreatePayloadJson" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/User" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "Update user",
+        "security": [{ "cookieAuth": [] }, { "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdatePayloadFormData"
+              }
+            },
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UserUpdatePayloadJson" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/User" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "webhooks": {}
+}

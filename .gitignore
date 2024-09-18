@@ -1,0 +1,23 @@
+# Remove the following lock files in real projects
+package-lock.json
+yarn.lock
+bun.lockb
+deno.lock
+
+dist
+node_modules
+worker
+.wrangler
+
+# Output of 'npm pack'
+*.tgz
+
+# yarn
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+/.idea

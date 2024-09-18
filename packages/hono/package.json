@@ -1,0 +1,43 @@
+{
+  "name": "@my-project/api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Hono API",
+  "scripts": {
+    "dev": "tsx watch src/serve.ts",
+    "start": "tsx src/serve.ts",
+    "typecheck": "tsc --noEmit",
+    "knex:migrate:latest": "npm run knex:run -- migrate:latest",
+    "knex:seed:run": "npm run knex:run -- seed:run",
+    "knex:run": "NODE_OPTIONS='--import tsx' npx knex --knexfile knexfile.ts"
+  },
+  "author": "",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./src/*"
+      ]
+    }
+  },
+  "dependencies": {
+    "@hono/zod-openapi": "^0.16.0",
+    "better-sqlite3": "^11.3.0",
+    "@hono/zod-validator": "^0.2.2",
+    "hono": "^4.6.2",
+    "knex": "^3.1.0",
+    "zod": "^3.23.8",
+    "@hono/node-server": "^1.13.1",
+    "ms": "^2.1.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.2",
+    "@faker-js/faker": "^9.0.1",
+    "@types/ms": "^0.7.34"
+  }
+}
