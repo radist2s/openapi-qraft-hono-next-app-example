@@ -1,0 +1,47 @@
+{
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "migrate:latest": "npm run knex:run -- migrate:latest",
+    "seed:run": "npm run knex:run -- seed:run",
+    "generate-api-client": "openapi-qraft --plugin tanstack-query-react --plugin openapi-typescript http://localhost:3000/api/doc --service-name-base endpoint[1] --operation-name-modifier 'get /**:get$ ==> findAll' 'get /**:getId ==> findOne' 'post /**:post$ ==> create' 'put /**:put$ ==> update' --explicit-component-exports --output-dir src/api/client",
+    "knex:run": "NODE_OPTIONS='--import tsx' npx knex --knexfile knexfile.ts"
+  },
+  "type": "module",
+  "dependencies": {
+    "@hono/zod-openapi": "^0.16.0",
+    "@hono/zod-validator": "^0.2.2",
+    "@openapi-qraft/react": "^2.0.0-next.11",
+    "@tanstack/react-query": "^5.56.2",
+    "better-sqlite3": "^11.3.0",
+    "hono": "^4.6.2",
+    "knex": "^3.1.0",
+    "next": "14.2.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "swr": "^2.2.5",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^9.0.1",
+    "@openapi-qraft/cli": "^2.0.0-next.11",
+    "@types/node": "20.16.5",
+    "@types/react": "18.3.7",
+    "@types/react-dom": "18.3.0",
+    "prettier": "^3.3.3",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.2"
+  },
+  "browser": {
+    "knex": false,
+    "crypto": false,
+    "stream": false,
+    "fs": false,
+    "timers": false,
+    "tty": false,
+    "better-sqlite3": false
+  }
+}
