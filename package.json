@@ -13,7 +13,7 @@
   "type": "module",
   "dependencies": {
     "@hono/zod-openapi": "^0.16.0",
-    "@hono/zod-validator": "^0.2.2",
+    "@hono/zod-validator": "^0.3.0",
     "@openapi-qraft/react": "^2.0.0-next.11",
     "@tanstack/react-query": "^5.56.2",
     "better-sqlite3": "^11.3.0",
