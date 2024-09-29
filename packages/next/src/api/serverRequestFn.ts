@@ -57,10 +57,15 @@ function createServerRequestFn<HonoApp extends OpenAPIHono<any>>(app: HonoApp) {
       const cookieHeader = response.headers.get("set-cookie");
 
       if (cookieHeader) {
-        const cookies = cookieParser.parse(cookieHeader);
-        cookies.forEach(({ name, value, ...options }) => {
-          nextCookies().set(name, value, options as ResponseCookie);
-        });
+        cookieParser
+          .splitCookiesString(cookieHeader)
+          .forEach((cookieString) => {
+            cookieParser
+              .parse(cookieString, { silent: true })
+              .forEach(({ name, value, ...options }) => {
+                nextCookies().set(name, value, options as ResponseCookie);
+              });
+          });
       }
 
       return processResponse(response);
