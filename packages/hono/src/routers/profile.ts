@@ -1,9 +1,9 @@
 import type { OpenAPIHono } from "@hono/zod-openapi";
 import { createRoute, z } from "@hono/zod-openapi";
-import { jwtAuthMiddleware } from "../middlewares/jwtAuthMiddleware";
+import { jwtAccessTokenMiddleware } from "../middlewares/jwtAuthMiddleware";
 import { createUnauthorizedResponseConfig } from "../schemas/openapi/createUnauthorizedResponseConfig";
 import { createValidationResponseConfig } from "../schemas/openapi/createValidationResponseConfig";
-import { security } from "../schemas/openapi/security";
+import { accessSecuritySchema } from "../schemas/openapi/security";
 import { HonoEnv } from "../utils/HonoEnv";
 
 export function mountProfileRoutes(app: OpenAPIHono<HonoEnv>) {
@@ -13,7 +13,7 @@ export function mountProfileRoutes(app: OpenAPIHono<HonoEnv>) {
       path: "/profile",
       operationId: "getProfile",
       description: "Get user profile",
-      security,
+      security: accessSecuritySchema,
       responses: {
         200: {
           content: {
@@ -30,11 +30,12 @@ export function mountProfileRoutes(app: OpenAPIHono<HonoEnv>) {
         422: createValidationResponseConfig(),
         401: createUnauthorizedResponseConfig(),
       },
-      middleware: jwtAuthMiddleware,
+      middleware: jwtAccessTokenMiddleware,
     }),
     async (context) => {
       const jwtPayload = context.get("jwtPayload");
-      return context.json({ email: jwtPayload.sub }, 200);
+      if (!jwtPayload) throw new Error("No access token");
+      return context.json({ email: jwtPayload.user_id }, 200);
     },
   );
 }

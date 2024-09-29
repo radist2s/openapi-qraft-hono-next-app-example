@@ -48,4 +48,41 @@ export async function getUserById(
   return db.table("users").where("id", id).first();
 }
 
+export async function getSessionById(
+  id: string,
+  db: Knex,
+): Promise<Session | undefined> {
+  return db.table("sessions").where("uuid", id).first();
+}
+
+export async function createSession(
+  sessionPayload: Pick<Session, "user_id" | "user_agent">,
+  db: Knex,
+): Promise<Pick<Session, "uuid" | "user_id">> {
+  const [{ uuid, user_id }] = await db
+    .table("sessions")
+    .insert(sessionPayload, ["uuid", "user_id"] satisfies Array<keyof Session>);
+  return { uuid, user_id };
+}
+
+export async function renewSession(sessionId: string, db: Knex): Promise<void> {
+  await db.table("sessions").where("uuid", sessionId).update({
+    renewed: db.fn.now(),
+  });
+}
+
+export async function deleteSession(
+  sessionId: string,
+  db: Knex,
+): Promise<void> {
+  await db.table("sessions").where("uuid", sessionId).del();
+}
+
+type Session = {
+  uuid: string;
+  user_id: string;
+  user_agent: string;
+  created: string;
+};
+
 export type User = z.infer<typeof UserSchema>;

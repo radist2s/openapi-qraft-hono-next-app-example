@@ -2,12 +2,12 @@ import type { OpenAPIHono } from "@hono/zod-openapi";
 import { createRoute, z } from "@hono/zod-openapi";
 import { createUser, getUserById, getUsers, updateUser } from "../db";
 import { dbConnectionMiddleware } from "../middlewares/dbConnectionMiddleware";
-import { jwtAuthMiddleware } from "../middlewares/jwtAuthMiddleware";
+import { jwtAccessTokenMiddleware } from "../middlewares/jwtAuthMiddleware";
 import { createUnauthorizedResponseConfig } from "../schemas/openapi/createUnauthorizedResponseConfig";
 import { createUserFormPayloadSchema } from "../schemas/openapi/createUserFormPayloadSchema";
 import { createUserJsonPayloadSchema } from "../schemas/openapi/createUserJsonPayloadSchema";
 import { createValidationResponseConfig } from "../schemas/openapi/createValidationResponseConfig";
-import { security } from "../schemas/openapi/security";
+import { accessSecuritySchema } from "../schemas/openapi/security";
 import { UserSchema } from "../schemas/UserSchema";
 import { HonoEnv } from "../utils/HonoEnv";
 
@@ -33,6 +33,8 @@ export function mountUsersRoutes(app: OpenAPIHono<HonoEnv>) {
       middleware: dbConnectionMiddleware,
     }),
     async (context) => {
+      if (!context.var.db) throw new Error("No database connection");
+
       const { id } = context.req.valid("param");
       return context.json(await getUserById(id, context.var.db));
     },
@@ -72,6 +74,8 @@ export function mountUsersRoutes(app: OpenAPIHono<HonoEnv>) {
       middleware: dbConnectionMiddleware,
     }),
     async (context) => {
+      if (!context.var.db) throw new Error("No database connection");
+
       const { page, limit } = context.req.valid("query");
       return context.json(await getUsers({ page, limit }, context.var.db));
     },
@@ -82,7 +86,7 @@ export function mountUsersRoutes(app: OpenAPIHono<HonoEnv>) {
       method: "post",
       path: "/users",
       description: "Create user",
-      security,
+      security: accessSecuritySchema,
       request: {
         body: {
           content: {
@@ -109,9 +113,11 @@ export function mountUsersRoutes(app: OpenAPIHono<HonoEnv>) {
         422: createValidationResponseConfig(),
         401: createUnauthorizedResponseConfig(),
       },
-      middleware: [jwtAuthMiddleware, dbConnectionMiddleware],
+      middleware: [jwtAccessTokenMiddleware, dbConnectionMiddleware],
     }),
     async (context) => {
+      if (!context.var.db) throw new Error("No database connection");
+
       const newUserPayload = context.req.raw.headers
         ?.get("Content-Type")
         ?.includes("multipart/form-data")
@@ -130,7 +136,7 @@ export function mountUsersRoutes(app: OpenAPIHono<HonoEnv>) {
       method: "put",
       path: "/users",
       description: "Update user",
-      security,
+      security: accessSecuritySchema,
       request: {
         body: {
           content: {
@@ -165,9 +171,11 @@ export function mountUsersRoutes(app: OpenAPIHono<HonoEnv>) {
         422: createValidationResponseConfig(),
         401: createUnauthorizedResponseConfig(),
       },
-      middleware: [jwtAuthMiddleware, dbConnectionMiddleware],
+      middleware: [jwtAccessTokenMiddleware, dbConnectionMiddleware],
     }),
     async (context) => {
+      if (!context.var.db) throw new Error("No database connection");
+
       const userToUpdate = context.req.raw.headers
         ?.get("Content-Type")
         ?.includes("multipart/form-data")

@@ -4,20 +4,61 @@ import { HTTPException } from "hono/http-exception";
 import { jwt, sign } from "hono/jwt";
 import { HonoEnv, JWTPayload } from "../utils/HonoEnv";
 
-/**
- * JWT authentication middleware for Hono with a custom error format.
- */
-export function jwtAuthMiddleware<
+export function jwtAccessTokenMiddleware<
   E extends HonoEnv = any,
   P extends string = string,
   I extends Input = {},
 >(context: Context<E, P, I>, next: Next): Promise<Response | void> {
+  return handleJWTAuthMiddleware(
+    {
+      secretName: "ACCESS_TOKEN_SECRET",
+      cookieName: ACCESS_TOKEN_COOKIE_NAME,
+    },
+    context,
+    next,
+  );
+}
+
+export function jwtRefreshTokenMiddleware<
+  E extends HonoEnv = any,
+  P extends string = string,
+  I extends Input = {},
+>(context: Context<E, P, I>, next: Next): Promise<Response | void> {
+  return handleJWTAuthMiddleware(
+    {
+      secretName: "REFRESH_TOKEN_SECRET",
+      cookieName: REFRESH_TOKEN_COOKIE_NAME,
+    },
+    context,
+    next,
+  );
+}
+
+/**
+ * JWT authentication middleware handler for Hono with a custom error format for the access token.
+ */
+function handleJWTAuthMiddleware<
+  E extends HonoEnv = any,
+  P extends string = string,
+  I extends Input = {},
+>(
+  {
+    secretName,
+    cookieName,
+  }: {
+    secretName: JWTSecretKeyName;
+    cookieName: string;
+  },
+  context: Context<E, P, I>,
+  next: Next,
+): Promise<Response | void> {
   const header = context.req.header();
   const jwtMiddleware = jwt({
-    secret: getJWTSecret(context),
+    secret: getSigningSecret(context, secretName),
     // If `Authorization` is not present, the JWT token should be in the cookie
-    cookie: header.authorization ? undefined : JWTTokenCookieName,
+    cookie: header.authorization ? undefined : cookieName,
   });
+
   return jwtMiddleware(context, next).catch((error) => {
     if (!(error instanceof HTTPException) || error.status !== 401) throw error;
 
@@ -49,20 +90,22 @@ export function jwtAuthMiddleware<
 /**
  * Signs a JWT payload with the secret from the environment and returns the token.
  */
-export async function signJWTPayload<
+export async function signJWTPayload(secret: string, payload: JWTPayload) {
+  return sign(payload, secret);
+}
+
+type JWTSecretKeyName = Extract<
+  keyof HonoEnv["Bindings"],
+  "REFRESH_TOKEN_SECRET" | "ACCESS_TOKEN_SECRET"
+>;
+
+export function getSigningSecret<
   E extends HonoEnv = any,
   P extends string = string,
   I extends Input = {},
->(context: Context<E, P, I>, payload: JWTPayload) {
-  return sign(payload, getJWTSecret(context));
+>(context: Context<E, P, I>, secret: JWTSecretKeyName) {
+  return env(context)?.[secret] ?? "SECRET";
 }
 
-function getJWTSecret<
-  E extends HonoEnv = any,
-  P extends string = string,
-  I extends Input = {},
->(context: Context<E, P, I>) {
-  return env(context)?.JWT_SECRET ?? "SECRET";
-}
-
-export const JWTTokenCookieName = "my-jwt-token";
+export const ACCESS_TOKEN_COOKIE_NAME = "my-access-token";
+export const REFRESH_TOKEN_COOKIE_NAME = "my-refresh-token";

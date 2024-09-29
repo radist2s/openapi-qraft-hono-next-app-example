@@ -6,7 +6,7 @@
       "cookieAuth": {
         "type": "apiKey",
         "in": "cookie",
-        "name": "my-jwt-token"
+        "name": "my-access-token"
       },
       "bearerAuth": {
         "type": "http",
@@ -562,9 +562,9 @@
           {
             "schema": {
               "type": "string",
-              "enum": ["cookie", "json"],
+              "enum": ["cookie", "json", "hybrid"],
               "default": "json",
-              "description": "The mode to return the token",
+              "description": "The mode to return the token. The `hybrid` mode will set the refresh token in the cookie and the access token in the JSON response.",
               "example": "json"
             },
             "required": false,
@@ -620,9 +620,18 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "token": { "type": "string", "example": "eyJhbG..." }
+                    "access_token": {
+                      "type": "string",
+                      "description": "The token to be used in the Authorization header",
+                      "example": "eyJhbG..."
+                    },
+                    "refresh_token": {
+                      "type": "string",
+                      "description": "The token to be used to refresh the `access_token`",
+                      "example": "eyJhbG..."
+                    }
                   },
-                  "required": ["token"]
+                  "required": ["access_token", "refresh_token"]
                 }
               }
             }
@@ -631,7 +640,81 @@
             "description": "Success response with JWT token in the cookie",
             "headers": {
               "Cookie": {
-                "schema": { "type": "string", "example": "my-jwt-token=1234" },
+                "schema": {
+                  "type": "string",
+                  "example": "my-access-token=eyJhbG...; my-refresh-token=eyJhbG..."
+                },
+                "required": true
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/refresh": {
+      "post": {
+        "operationId": "refresh",
+        "description": "Refresh the access token",
+        "security": [
+          { "cookieRefreshToken": [] },
+          { "bearerRefreshToken": [] }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": ["cookie", "json", "hybrid"],
+              "default": "json",
+              "description": "The mode to return the token. The `hybrid` mode will set the refresh token in the cookie and the access token in the JSON response.",
+              "example": "json"
+            },
+            "required": false,
+            "name": "mode",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success response with JWT token in JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "access_token": {
+                      "type": "string",
+                      "description": "The token to be used in the Authorization header",
+                      "example": "eyJhbG..."
+                    },
+                    "refresh_token": {
+                      "type": "string",
+                      "description": "The token to be used to refresh the `access_token`",
+                      "example": "eyJhbG..."
+                    }
+                  },
+                  "required": ["access_token", "refresh_token"]
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "Success response with JWT token in the cookie",
+            "headers": {
+              "Cookie": {
+                "schema": {
+                  "type": "string",
+                  "example": "my-access-token=eyJhbG...; my-refresh-token=eyJhbG..."
+                },
                 "required": true
               }
             }
@@ -653,13 +736,16 @@
       "post": {
         "operationId": "logout",
         "description": "Sign out",
-        "security": [{ "cookieAuth": [] }, { "bearerAuth": [] }],
+        "security": [{ "cookieAccessToken": [] }, { "bearerAccessToken": [] }],
         "responses": {
           "204": {
-            "description": "Success response with removed JWT token in the cookie",
+            "description": "Success response with JWT token in the cookie",
             "headers": {
               "Cookie": {
-                "schema": { "type": "string", "example": "my-jwt-token=''" },
+                "schema": {
+                  "type": "string",
+                  "example": "my-access-token=eyJhbG...; my-refresh-token=eyJhbG..."
+                },
                 "required": true
               }
             }
@@ -691,7 +777,7 @@
       "get": {
         "operationId": "getProfile",
         "description": "Get user profile",
-        "security": [{ "cookieAuth": [] }, { "bearerAuth": [] }],
+        "security": [{ "cookieAccessToken": [] }, { "bearerAccessToken": [] }],
         "responses": {
           "200": {
             "description": "Success response with JWT token in JSON",
@@ -800,7 +886,7 @@
       },
       "post": {
         "description": "Create user",
-        "security": [{ "cookieAuth": [] }, { "bearerAuth": [] }],
+        "security": [{ "cookieAccessToken": [] }, { "bearerAccessToken": [] }],
         "requestBody": {
           "content": {
             "multipart/form-data": {
@@ -846,7 +932,7 @@
       },
       "put": {
         "description": "Update user",
-        "security": [{ "cookieAuth": [] }, { "bearerAuth": [] }],
+        "security": [{ "cookieAccessToken": [] }, { "bearerAccessToken": [] }],
         "requestBody": {
           "content": {
             "multipart/form-data": {

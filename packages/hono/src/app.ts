@@ -1,6 +1,6 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { csrfMiddleware } from "./middlewares/csrfMiddleware";
-import { JWTTokenCookieName } from "./middlewares/jwtAuthMiddleware";
+import { ACCESS_TOKEN_COOKIE_NAME } from "./middlewares/jwtAuthMiddleware";
 import { mountRoutes } from "./routers";
 import { type HonoEnv } from "./utils/HonoEnv";
 
@@ -33,7 +33,7 @@ app.use("*", csrfMiddleware);
 app.openAPIRegistry.registerComponent("securitySchemes", "cookieAuth", {
   type: "apiKey",
   in: "cookie",
-  name: JWTTokenCookieName,
+  name: ACCESS_TOKEN_COOKIE_NAME,
 });
 
 // JWT authentication security scheme definition (in authorization header) (affects only the final OpenAPI document)
