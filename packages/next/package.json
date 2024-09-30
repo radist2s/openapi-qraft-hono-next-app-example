@@ -28,7 +28,7 @@
   "devDependencies": {
     "@openapi-qraft/cli": "^2.0.0-next.12",
     "@types/node": "20.16.5",
-    "@types/react": "18.3.7",
+    "@types/react": "18.3.10",
     "@types/react-dom": "18.3.0",
     "tsx": "^4.19.1",
     "typescript": "^5.6.2",
