@@ -613,9 +613,20 @@
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "description": "Success response with JWT token in JSON",
+            "headers": {
+              "set-cookie": {
+                "schema": {
+                  "type": "string",
+                  "description": "If the `mode` is `cookie` or `hybrid`, the cookie will be set.",
+                  "example": "my-access-token=eyJhbG...; my-refresh-token=eyJhbG..."
+                },
+                "required": true
+              }
+            },
             "content": {
+              "text/plain": { "schema": { "type": "string", "minLength": 0 } },
               "application/json": {
                 "schema": {
                   "type": "object",
@@ -631,20 +642,9 @@
                       "example": "eyJhbG..."
                     }
                   },
-                  "required": ["access_token", "refresh_token"]
+                  "required": ["access_token", "refresh_token"],
+                  "description": "If the `mode` is `json`, the `access_token` and `refresh_token` will be returned."
                 }
-              }
-            }
-          },
-          "204": {
-            "description": "Success response with JWT token in the cookie",
-            "headers": {
-              "Cookie": {
-                "schema": {
-                  "type": "string",
-                  "example": "my-access-token=eyJhbG...; my-refresh-token=eyJhbG..."
-                },
-                "required": true
               }
             }
           },
@@ -684,9 +684,20 @@
           }
         ],
         "responses": {
-          "200": {
+          "201": {
             "description": "Success response with JWT token in JSON",
+            "headers": {
+              "set-cookie": {
+                "schema": {
+                  "type": "string",
+                  "description": "If the `mode` is `cookie` or `hybrid`, the cookie will be set.",
+                  "example": "my-access-token=eyJhbG...; my-refresh-token=eyJhbG..."
+                },
+                "required": true
+              }
+            },
             "content": {
+              "text/plain": { "schema": { "type": "string", "minLength": 0 } },
               "application/json": {
                 "schema": {
                   "type": "object",
@@ -702,20 +713,9 @@
                       "example": "eyJhbG..."
                     }
                   },
-                  "required": ["access_token", "refresh_token"]
+                  "required": ["access_token", "refresh_token"],
+                  "description": "If the `mode` is `json`, the `access_token` and `refresh_token` will be returned."
                 }
-              }
-            }
-          },
-          "204": {
-            "description": "Success response with JWT token in the cookie",
-            "headers": {
-              "Cookie": {
-                "schema": {
-                  "type": "string",
-                  "example": "my-access-token=eyJhbG...; my-refresh-token=eyJhbG..."
-                },
-                "required": true
               }
             }
           },
@@ -738,13 +738,14 @@
         "description": "Sign out",
         "security": [{ "cookieAccessToken": [] }, { "bearerAccessToken": [] }],
         "responses": {
-          "204": {
-            "description": "Success response with JWT token in the cookie",
+          "205": {
+            "description": "Success response with cookies removal",
             "headers": {
-              "Cookie": {
+              "set-cookie": {
                 "schema": {
                   "type": "string",
-                  "example": "my-access-token=eyJhbG...; my-refresh-token=eyJhbG..."
+                  "description": "Cookies removal header",
+                  "example": "my-access-token=; my-refresh-token="
                 },
                 "required": true
               }
@@ -756,16 +757,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/UnauthorizedErrorResponse"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidationErrorResponse"
                 }
               }
             }
@@ -900,7 +891,7 @@
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "description": "Success response",
             "content": {
               "application/json": {
