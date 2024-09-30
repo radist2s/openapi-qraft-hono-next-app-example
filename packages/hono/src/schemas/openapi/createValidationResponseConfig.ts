@@ -1,8 +1,8 @@
-import type { ResponseConfig } from "@asteasolutions/zod-to-openapi/dist/openapi-registry";
+import type { ResponseConfig } from "@asteasolutions/zod-to-openapi";
 import { z } from "@hono/zod-openapi";
 import { ValidationIssueSchema } from "../ValidationIssueSchema";
 
-export function createValidationResponseConfig(): ResponseConfig {
+export function createValidationResponseConfig() {
   return {
     content: {
       "application/json": {
@@ -14,5 +14,5 @@ export function createValidationResponseConfig(): ResponseConfig {
       },
     },
     description: "Validation Error",
-  };
+  } satisfies ResponseConfig;
 }

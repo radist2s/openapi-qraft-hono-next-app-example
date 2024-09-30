@@ -4,7 +4,7 @@ import { createUser, getUserById, getUsers, updateUser } from "../db";
 import { dbConnectionMiddleware } from "../middlewares/dbConnectionMiddleware";
 import { jwtAccessTokenMiddleware } from "../middlewares/jwtAuthMiddleware";
 import { createUnauthorizedResponseConfig } from "../schemas/openapi/createUnauthorizedResponseConfig";
-import { createUserFormPayloadSchema } from "../schemas/openapi/createUserFormPayloadSchema";
+import { createUserFormDataPayloadSchema } from "../schemas/openapi/createUserFormDataPayloadSchema";
 import { createUserJsonPayloadSchema } from "../schemas/openapi/createUserJsonPayloadSchema";
 import { createValidationResponseConfig } from "../schemas/openapi/createValidationResponseConfig";
 import { accessSecuritySchema } from "../schemas/openapi/security";
@@ -91,7 +91,7 @@ export function mountUsersRoutes(app: OpenAPIHono<HonoEnv>) {
         body: {
           content: {
             "multipart/form-data": {
-              schema: createUserFormPayloadSchema().openapi(
+              schema: createUserFormDataPayloadSchema().openapi(
                 "UserCreatePayloadFormData",
               ),
             },
@@ -104,7 +104,7 @@ export function mountUsersRoutes(app: OpenAPIHono<HonoEnv>) {
         },
       },
       responses: {
-        200: {
+        201: {
           content: {
             "application/json": { schema: UserSchema },
           },
@@ -126,7 +126,7 @@ export function mountUsersRoutes(app: OpenAPIHono<HonoEnv>) {
 
       return context.json(
         await createUser(newUserPayload, context.var.db),
-        200,
+        201,
       );
     },
   );
@@ -141,7 +141,7 @@ export function mountUsersRoutes(app: OpenAPIHono<HonoEnv>) {
         body: {
           content: {
             "multipart/form-data": {
-              schema: createUserFormPayloadSchema()
+              schema: createUserFormDataPayloadSchema()
                 .merge(
                   z.object({
                     id: z.string().min(1).openapi({ example: "1234" }),

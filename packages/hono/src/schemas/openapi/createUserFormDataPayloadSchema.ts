@@ -1,6 +1,6 @@
 import { z } from "@hono/zod-openapi";
 
-export function createUserFormPayloadSchema() {
+export function createUserFormDataPayloadSchema() {
   return z.object({
     name: z
       .string()

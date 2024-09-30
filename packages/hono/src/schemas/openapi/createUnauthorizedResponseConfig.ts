@@ -1,7 +1,7 @@
-import type { ResponseConfig } from "@asteasolutions/zod-to-openapi/dist/openapi-registry";
+import type { ResponseConfig } from "@asteasolutions/zod-to-openapi";
 import { z } from "@hono/zod-openapi";
 
-export function createUnauthorizedResponseConfig(): ResponseConfig {
+export function createUnauthorizedResponseConfig() {
   return {
     content: {
       "application/json": {
@@ -20,5 +20,5 @@ export function createUnauthorizedResponseConfig(): ResponseConfig {
       },
     },
     description: "Unauthorized Error",
-  };
+  } satisfies ResponseConfig;
 }

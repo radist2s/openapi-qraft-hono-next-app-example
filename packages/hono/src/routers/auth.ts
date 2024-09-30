@@ -1,4 +1,4 @@
-import type { ResponseConfig } from "@asteasolutions/zod-to-openapi/dist/openapi-registry";
+import type { ResponseConfig } from "@asteasolutions/zod-to-openapi";
 import type { OpenAPIHono } from "@hono/zod-openapi";
 import type { CookieOptions } from "hono/utils/cookie";
 import { createRoute, z } from "@hono/zod-openapi";
@@ -63,8 +63,7 @@ export function mountSignInRoutes(app: OpenAPIHono<HonoEnv>) {
         },
       },
       responses: {
-        204: createSuccessAuthResponseCookieConfig(),
-        200: createSuccessAuthResponseJSONConfig(),
+        201: createSuccessAuthResponseConfig(),
         422: createValidationResponseConfig(),
       },
       middleware: dbConnectionMiddleware,
@@ -110,8 +109,7 @@ export function mountSignInRoutes(app: OpenAPIHono<HonoEnv>) {
         query: createReturnModeQuerySchema(),
       },
       responses: {
-        204: createSuccessAuthResponseCookieConfig(),
-        200: createSuccessAuthResponseJSONConfig(),
+        201: createSuccessAuthResponseConfig(),
         422: createValidationResponseConfig(),
       },
       middleware: [jwtRefreshTokenMiddleware, dbConnectionMiddleware],
@@ -149,8 +147,19 @@ export function mountSignInRoutes(app: OpenAPIHono<HonoEnv>) {
       description: "Sign out",
       security: accessSecuritySchema,
       responses: {
-        204: createSuccessAuthResponseCookieConfig(),
-        422: createValidationResponseConfig(),
+        205: {
+          headers: z.object({
+            "set-cookie": z
+              .string()
+              .openapi({
+                example: `${ACCESS_TOKEN_COOKIE_NAME}=; ${REFRESH_TOKEN_COOKIE_NAME}=`,
+              })
+              .openapi({
+                description: "Cookies removal header",
+              }),
+          }),
+          description: "Success response with cookies removal",
+        },
         401: createUnauthorizedResponseConfig(),
       },
       middleware: [jwtAccessTokenMiddleware, dbConnectionMiddleware],
@@ -168,7 +177,7 @@ export function mountSignInRoutes(app: OpenAPIHono<HonoEnv>) {
 
       await deleteSession(jwtPayload.sub, context.var.db);
 
-      return context.body(null, 204);
+      return context.body(null, 205);
     },
   );
 }
@@ -244,12 +253,12 @@ async function processSessionResponse(
       secure: Boolean(ACCESS_TOKEN_COOKIE_SECURE),
     });
 
-    return context.body(null, 204);
+    return context.text("", 201);
   }
 
   return context.json(
     { access_token: accessToken, refresh_token: refreshToken },
-    200,
+    201,
   );
 }
 
@@ -268,33 +277,41 @@ function createReturnModeQuerySchema() {
   });
 }
 
-function createSuccessAuthResponseJSONConfig(): ResponseConfig {
+function createSuccessAuthResponseConfig() {
   return {
-    content: {
-      "application/json": {
-        schema: z.object({
-          access_token: z.string().openapi({
-            example: "eyJhbG...",
-            description: "The token to be used in the Authorization header",
-          }),
-          refresh_token: z.string().openapi({
-            example: "eyJhbG...",
-            description: "The token to be used to refresh the `access_token`",
-          }),
+    headers: z.object({
+      "set-cookie": z
+        .string()
+        .openapi({
+          example: `${ACCESS_TOKEN_COOKIE_NAME}=eyJhbG...; ${REFRESH_TOKEN_COOKIE_NAME}=eyJhbG...`,
+        })
+        .openapi({
+          description:
+            "If the `mode` is `cookie` or `hybrid`, the cookie will be set.",
         }),
+    }),
+    content: {
+      "text/plain": {
+        schema: z.string().min(0),
+      },
+      "application/json": {
+        schema: z
+          .object({
+            access_token: z.string().openapi({
+              example: "eyJhbG...",
+              description: "The token to be used in the Authorization header",
+            }),
+            refresh_token: z.string().openapi({
+              example: "eyJhbG...",
+              description: "The token to be used to refresh the `access_token`",
+            }),
+          })
+          .openapi({
+            description:
+              "If the `mode` is `json`, the `access_token` and `refresh_token` will be returned.",
+          }),
       },
     },
     description: "Success response with JWT token in JSON",
-  };
-}
-
-function createSuccessAuthResponseCookieConfig(): ResponseConfig {
-  return {
-    headers: z.object({
-      Cookie: z.string().openapi({
-        example: `${ACCESS_TOKEN_COOKIE_NAME}=eyJhbG...; ${REFRESH_TOKEN_COOKIE_NAME}=eyJhbG...`,
-      }),
-    }),
-    description: "Success response with JWT token in the cookie",
-  };
+  } satisfies ResponseConfig;
 }
