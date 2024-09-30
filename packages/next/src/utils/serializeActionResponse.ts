@@ -1,3 +1,4 @@
+import type { ValidationErrorResponse } from "@/api/client/schema";
 import { type RequestFnResponse } from "@openapi-qraft/react";
 
 export async function serializeActionResponse<TData, TError>(
@@ -13,7 +14,7 @@ export async function serializeActionResponse<TData, TError>(
 
   // Native Error should be serialized to JSON
   if (result.error instanceof Error) {
-    const serializedError: SerializedAPIErrorResponse = {
+    const serializedError: ValidationErrorResponse = {
       issues: [
         {
           path: [],
@@ -30,40 +31,5 @@ export async function serializeActionResponse<TData, TError>(
     };
   }
 
-  if (result.error && result.response?.status === 401) {
-    const serializedError: SerializedAPIErrorResponse = {
-      issues: [
-        {
-          path: [],
-          message: "You are not authorized to perform this action",
-          fatal: true,
-          code: "unauthorized",
-        },
-      ],
-    };
-
-    return {
-      data: undefined,
-      error: serializedError,
-    };
-  }
-
   return { data: undefined, error: result.error! };
 }
-
-export type SerializedAPIErrorResponse = {
-  issues: Array<
-    | {
-        path: never[];
-        message: string;
-        fatal?: boolean;
-        code: "custom";
-      }
-    | {
-        path: never[];
-        message: string;
-        fatal?: boolean;
-        code: "unauthorized";
-      }
-  >;
-};

@@ -1,11 +1,13 @@
 "use server";
-import { createAPIClient, type Services } from "@/api/client";
+
 import type { User, ValidationErrorResponse } from "@/api/client/schema";
-import { serverRequestFn } from "@/api/serverRequestFn";
 import {
-  serializeActionResponse,
-  SerializedAPIErrorResponse,
-} from "@/utils/serializeActionResponse";
+  createAPIClient,
+  Services,
+  UnauthorizedErrorResponse,
+} from "@/api/client";
+import { serverRequestFn } from "@/api/serverRequestFn";
+import { serializeActionResponse } from "@/utils/serializeActionResponse";
 
 export async function createUserAction(
   _prevState: CreateUserFormState,
@@ -26,5 +28,5 @@ export async function createUserAction(
 
 export type CreateUserFormState = {
   data?: User;
-  error?: ValidationErrorResponse | SerializedAPIErrorResponse;
+  error?: ValidationErrorResponse | UnauthorizedErrorResponse;
 };
