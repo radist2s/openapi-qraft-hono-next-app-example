@@ -28,7 +28,7 @@
   "dependencies": {
     "@hono/zod-openapi": "^0.16.0",
     "better-sqlite3": "^11.3.0",
-    "@hono/zod-validator": "^0.2.2",
+    "@hono/zod-validator": "^0.4.1",
     "hono": "^4.6.2",
     "knex": "^3.1.0",
     "zod": "^3.23.8",
