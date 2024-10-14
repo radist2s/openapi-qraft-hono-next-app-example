@@ -47,19 +47,19 @@ export function mountUsersRoutes(app: OpenAPIHono<HonoEnv>) {
       description: "Get users",
       request: {
         query: z.object({
-          page: z // specify '?page' as a query parameter
-            .preprocess(
-              // convert string to number
-              (val) => Number(val) || undefined,
-              z.number().min(1).optional().default(1), // specify the type and minimum value of the query parameter
-            )
+          page: z.coerce // specify '?page' as a query parameter
+            .number()
+            .min(1)
+            .optional()
+            .default(1)
             .openapi({ example: 2 }), // add an example value to be used in the OpenAPI documentation
 
-          limit: z
-            .preprocess(
-              (val) => Number(val) || undefined,
-              z.number().min(1).max(100).optional().default(10),
-            )
+          limit: z.coerce
+            .number()
+            .min(1)
+            .max(100)
+            .optional()
+            .default(10)
             .openapi({ example: 10 }),
         }),
       },
