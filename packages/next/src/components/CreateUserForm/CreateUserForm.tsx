@@ -1,15 +1,16 @@
 "use client";
-import { useFormState } from "react-dom";
-import { useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+
+import { createAPIClient } from "@/api/client";
 import {
   createUserAction,
   CreateUserFormState,
 } from "@/components/CreateUserForm/createUserAction";
 import { requestFn } from "@openapi-qraft/react";
-import { createAPIClient } from "@/api/client";
 import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef } from "react";
+import { useFormState } from "react-dom";
 
 export function CreateUserForm() {
   const [formState, formAction, isFormPending] = useFormState<
@@ -36,6 +37,7 @@ export function CreateUserForm() {
   useEffect(() => {
     if (formState.data?.id) {
       formRef.current?.reset();
+      void qraft.users.findAll.invalidateQueries();
     }
   }, [formState.data?.id]);
 
