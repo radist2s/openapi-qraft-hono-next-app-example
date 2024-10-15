@@ -486,9 +486,11 @@
             "example": "John Doe"
           },
           "age": {
-            "type": "string",
+            "type": "number",
+            "minimum": 1,
+            "maximum": 150,
             "description": "User age",
-            "example": "30"
+            "example": 30
           }
         },
         "required": ["name", "age"]
@@ -522,9 +524,11 @@
             "example": "John Doe"
           },
           "age": {
-            "type": "string",
+            "type": "number",
+            "minimum": 1,
+            "maximum": 150,
             "description": "User age",
-            "example": "30"
+            "example": 30
           },
           "id": { "type": "string", "minLength": 1, "example": "1234" }
         },
@@ -573,6 +577,7 @@
           }
         ],
         "requestBody": {
+          "required": true,
           "content": {
             "multipart/form-data": {
               "schema": {
@@ -839,7 +844,7 @@
         "parameters": [
           {
             "schema": {
-              "type": ["number", "null"],
+              "type": "number",
               "minimum": 1,
               "default": 1,
               "example": 2
@@ -850,7 +855,7 @@
           },
           {
             "schema": {
-              "type": ["number", "null"],
+              "type": "number",
               "minimum": 1,
               "maximum": 100,
               "default": 10,
@@ -879,6 +884,7 @@
         "description": "Create user",
         "security": [{ "cookieAccessToken": [] }, { "bearerAccessToken": [] }],
         "requestBody": {
+          "required": true,
           "content": {
             "multipart/form-data": {
               "schema": {
@@ -925,6 +931,7 @@
         "description": "Update user",
         "security": [{ "cookieAccessToken": [] }, { "bearerAccessToken": [] }],
         "requestBody": {
+          "required": true,
           "content": {
             "multipart/form-data": {
               "schema": {

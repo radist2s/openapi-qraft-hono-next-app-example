@@ -40,6 +40,7 @@ export function mountSignInRoutes(app: OpenAPIHono<HonoEnv>) {
       request: {
         query: createReturnModeQuerySchema(),
         body: {
+          required: true,
           content: {
             "multipart/form-data": {
               schema: z.object({

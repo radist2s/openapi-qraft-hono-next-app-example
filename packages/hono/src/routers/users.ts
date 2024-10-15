@@ -89,6 +89,7 @@ export function mountUsersRoutes(app: OpenAPIHono<HonoEnv>) {
       security: accessSecuritySchema,
       request: {
         body: {
+          required: true,
           content: {
             "multipart/form-data": {
               schema: createUserFormDataPayloadSchema().openapi(
@@ -139,6 +140,7 @@ export function mountUsersRoutes(app: OpenAPIHono<HonoEnv>) {
       security: accessSecuritySchema,
       request: {
         body: {
+          required: true,
           content: {
             "multipart/form-data": {
               schema: createUserFormDataPayloadSchema()
