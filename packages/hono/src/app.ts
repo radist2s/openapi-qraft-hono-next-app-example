@@ -1,4 +1,5 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
+import { apiReference } from "@scalar/hono-api-reference";
 import { csrfMiddleware } from "./middlewares/csrfMiddleware";
 import { ACCESS_TOKEN_COOKIE_NAME } from "./middlewares/jwtAuthMiddleware";
 import { mountRoutes } from "./routers";
@@ -52,6 +53,15 @@ app.doc31("/doc", {
     title: "My API",
   },
 });
+
+app.get(
+  "/doc/ui",
+  apiReference({
+    spec: {
+      url: "/api/doc",
+    },
+  }),
+);
 
 // Mount the actual application routes
 mountRoutes(app);
