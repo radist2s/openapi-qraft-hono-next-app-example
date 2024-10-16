@@ -7,16 +7,22 @@
 
 ## Usage
 
-```bash
-# Install dependencies
-npm install
-# Generate API client for the Next.js project
-npm run generate-api-client -w @my-project/next
-# Seed the database for the Hono project
-npm run knex:seed:run -w @my-project/api
-# Start the Next.js project
-npm run dev -w @my-project/next
-```
+- Install dependencies
+  ```bash
+  npm install
+  ```
+- Generate API client for the Next.js project
+  ```bash
+  npm run generate-api-client -w @my-project/next
+  ```
+- Seed the database for the Hono project
+  ```bash
+  npm run knex:seed:run -w @my-project/api
+  ```
+- Start the Next.js project
+  ```bash
+  npm run dev -w @my-project/next
+  ```
 
 ## Author
 
